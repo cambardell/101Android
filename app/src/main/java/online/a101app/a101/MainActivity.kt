@@ -36,12 +36,27 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .build(),
-                RC_SIGN_IN);
+        val auth = FirebaseAuth.getInstance()
+        if (auth.currentUser != null) {
+            val user = FirebaseAuth.getInstance().currentUser
+            Log.d("Login", "Success")
+            listViewItems = findViewById<View>(R.id.items_list) as ListView
+            channelList = mutableListOf<Channel>()
+            adapter = ChannelAdapter(this, channelList!!)
+            listViewItems!!.setAdapter(adapter)
+
+            database = FirebaseDatabase.getInstance().reference
+            database.addListenerForSingleValueEvent(itemListener)
+        } else {
+            startActivityForResult(
+                    AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setAvailableProviders(providers)
+                            .build(),
+                    RC_SIGN_IN);
+        }
+
+
     }
 
     var itemListener: ValueEventListener = object : ValueEventListener {
