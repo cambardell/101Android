@@ -15,6 +15,10 @@ import android.R.attr.data
 import com.firebase.ui.auth.IdpResponse
 import android.R.attr.data
 import android.app.Activity
+import android.view.Menu
+import android.view.MenuInflater
+import android.widget.Toolbar
+import kotlin.collections.HashMap
 
 
 class MainActivity : AppCompatActivity() {
@@ -23,9 +27,11 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var database: DatabaseReference
 
-    var channelList: MutableList<Channel>? = null
+    private var channelList: MutableList<Channel>? = null
     lateinit var adapter: ChannelAdapter
     private var listViewItems: ListView? = null
+
+
 
     private var providers: List<AuthUI.IdpConfig> = Arrays.asList(
             AuthUI.IdpConfig.EmailBuilder().build()
@@ -37,8 +43,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val auth = FirebaseAuth.getInstance()
+
         if (auth.currentUser != null) {
-            val user = FirebaseAuth.getInstance().currentUser
+
             Log.d("Login", "Success")
             listViewItems = findViewById<View>(R.id.items_list) as ListView
             channelList = mutableListOf<Channel>()
@@ -47,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
             database = FirebaseDatabase.getInstance().reference
             database.addListenerForSingleValueEvent(itemListener)
+
         } else {
             startActivityForResult(
                     AuthUI.getInstance()
@@ -57,6 +65,11 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_bar, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
     var itemListener: ValueEventListener = object : ValueEventListener {
@@ -82,15 +95,29 @@ class MainActivity : AppCompatActivity() {
             while (itemsIterator.hasNext()) {
                 //get current item
                 val currentItem = itemsIterator.next()
+
                 val channelItem = Channel.create()
                 //get current data in a map
                 val map = currentItem.getValue() as HashMap<String, Any>
                 //key will return Firebase ID
+                channelItem.channelMembers = map.get("members") as HashMap<Any, Any>
                 channelItem.channelName = map.get("name") as String?
                 channelItem.channelSchool = map.get("school") as String?
-                channelList!!.add(channelItem);
+                val userId = FirebaseAuth.getInstance().currentUser!!.uid.toString()
+                val members = channelItem.channelMembers as HashMap<Any, Any>
+                if (members != null) {
+                    Log.d("members", members.toString())
+                    when {
+                        userId in members.values -> channelList!!.add(channelItem);
+
+                    }
+                }
+
+
+
             }
         }
+
         //alert adapter that has changed
         adapter.notifyDataSetChanged()
     }
@@ -102,7 +129,6 @@ class MainActivity : AppCompatActivity() {
 
             if (resultCode === Activity.RESULT_OK) {
                 // Successfully signed in
-                val user = FirebaseAuth.getInstance().currentUser
                 Log.d("Login", "Success")
                 listViewItems = findViewById<View>(R.id.items_list) as ListView
                 channelList = mutableListOf<Channel>()
