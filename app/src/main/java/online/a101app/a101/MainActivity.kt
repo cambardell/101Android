@@ -17,6 +17,8 @@ import android.R.attr.data
 import android.app.Activity
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
+import android.widget.Button
 import android.widget.Toolbar
 import kotlin.collections.HashMap
 
@@ -64,6 +66,15 @@ class MainActivity : AppCompatActivity() {
                     RC_SIGN_IN);
         }
 
+        val context = this
+        // When a row is clicked, move to the chat view
+        listViewItems!!.setOnItemClickListener { _, _, position, _ ->
+            val selectedChannel = channelList!![position]
+            val detailIntent = ChatActivity.newIntent(context, selectedChannel)
+
+            startActivity(detailIntent)
+        }
+
 
     }
 
@@ -71,6 +82,24 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_bar, menu)
         return super.onCreateOptionsMenu(menu)
     }
+
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.add_channel -> {
+            val intent = Intent(this, AddChannelActivity::class.java).apply {
+
+            }
+            startActivity(intent)
+            true
+        }
+
+        else -> {
+            // If we got here, the user's action was not recognized.
+            // Invoke the superclass to handle it.
+            super.onOptionsItemSelected(item)
+        }
+    }
+
 
     var itemListener: ValueEventListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -83,6 +112,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    // Build the channel list
     private fun addDataToList(dataSnapshot: DataSnapshot) {
         val items = dataSnapshot.children.iterator()
 
