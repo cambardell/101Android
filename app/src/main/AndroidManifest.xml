@@ -18,7 +18,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ChatActivity" />
-        <activity android:name=".AddChannelActivity"></activity>
+        <activity android:name=".AddChannelActivity" />
+        <activity android:name=".AccountActivity"></activity>
     </application>
 
 </manifest>

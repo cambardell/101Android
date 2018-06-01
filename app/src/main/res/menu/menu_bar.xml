@@ -9,6 +9,11 @@
         android:icon="@drawable/ic_add_black_24dp"
         android:title="Add Class"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/account"
+        android:icon="@drawable/ic_person_black_48dp"
+        android:title="Add Class"
+        app:showAsAction="always" />
 
 
 </menu>

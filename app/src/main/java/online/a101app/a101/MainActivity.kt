@@ -93,6 +93,14 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
+        R.id.account -> {
+            val intent = Intent(this, AccountActivity::class.java).apply {
+
+            }
+            startActivity(intent)
+            true
+        }
+
         else -> {
             // If we got here, the user's action was not recognized.
             // Invoke the superclass to handle it.
