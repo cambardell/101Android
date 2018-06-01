@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.ListView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -12,9 +13,10 @@ class AddChannelActivity : AppCompatActivity() {
 
     lateinit var database: DatabaseReference
 
-    private var channelList: MutableList<Channel>? = null
+    var channelList: MutableList<Channel>? = null
     lateinit var adapter: ChannelAdapter
     private var listViewItems: ListView? = null
+    private var checkmark: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +29,17 @@ class AddChannelActivity : AppCompatActivity() {
 
         database = FirebaseDatabase.getInstance().reference
         database.addListenerForSingleValueEvent(itemListener)
+
+        checkmark = findViewById(R.id.checkmark)
+
+
+        // When a row is clicked, add the user id to members.
+        listViewItems!!.setOnItemClickListener { _, _, position, _ ->
+            val selectedChannel = channelList!![position]
+            addToMembers(selectedChannel)
+            channelList!!.removeAt(position)
+            adapter.notifyDataSetChanged()
+        }
 
     }
 
@@ -44,6 +57,7 @@ class AddChannelActivity : AppCompatActivity() {
     // Build the channel list
     private fun addDataToList(dataSnapshot: DataSnapshot) {
         val items = dataSnapshot.children.iterator()
+        Log.d("Updating data", "data")
 
         //Check if current database contains any collection
         if (items.hasNext()) {
@@ -62,17 +76,15 @@ class AddChannelActivity : AppCompatActivity() {
                 channelItem.channelMembers = map.get("members") as HashMap<Any, Any>
                 channelItem.channelName = map.get("name") as String?
                 channelItem.channelSchool = map.get("school") as String?
+                channelItem.channelId = currentItem.key
                 val userId = FirebaseAuth.getInstance().currentUser!!.uid.toString()
                 val members = channelItem.channelMembers as HashMap<Any, Any>
                 if (members != null) {
-                    Log.d("members", members.toString())
+
                     when {
                         userId !in members.values -> channelList!!.add(channelItem);
                     }
                 }
-
-
-
             }
         }
 
@@ -80,5 +92,20 @@ class AddChannelActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
     }
 
+    fun addToMembers(channel: Channel) {
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val userDisplayName = FirebaseAuth.getInstance().currentUser!!.displayName as String
+        val database = FirebaseDatabase.getInstance().getReference("channels")
+
+        var members = database.child(channel.channelId.toString()).child("members")
+        members.push().setValue(userId)
+
+
+        var names = database.child(channel.channelId.toString()).child("names")
+        names.push().setValue(userDisplayName)
+
+        val database2 = FirebaseDatabase.getInstance().reference
+
+    }
 
 }

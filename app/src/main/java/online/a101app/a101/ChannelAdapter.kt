@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ImageView
 import android.widget.TextView
 
 
@@ -19,6 +20,9 @@ class ChannelAdapter(context: Context, ChannelList: MutableList<Channel>) : Base
         val channelSchool: String = itemList.get(position).channelSchool as String
         val view: View
         val vh: ListRowHolder
+
+
+
 
         if (convertView == null) {
             view = mInflater.inflate(R.layout.channel_row, parent, false)

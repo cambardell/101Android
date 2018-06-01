@@ -8,4 +8,5 @@ class Channel {
     var channelName: String? = null
     var channelSchool: String? = null
     var channelMembers: Any? = null
+    var channelId: Any? = null
 }
