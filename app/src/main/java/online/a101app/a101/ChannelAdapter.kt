@@ -4,12 +4,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
+import android.widget.Filter
+import android.widget.Filterable
 
 
-class ChannelAdapter(context: Context, ChannelList: MutableList<Channel>) : BaseAdapter() {
+
+class ChannelAdapter(context: Context, ChannelList: MutableList<Channel>) : BaseAdapter()  {
+
 
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private var itemList = ChannelList
@@ -20,8 +22,6 @@ class ChannelAdapter(context: Context, ChannelList: MutableList<Channel>) : Base
         val channelSchool: String = itemList.get(position).channelSchool as String
         val view: View
         val vh: ListRowHolder
-
-
 
 
         if (convertView == null) {
@@ -58,4 +58,11 @@ class ChannelAdapter(context: Context, ChannelList: MutableList<Channel>) : Base
         val schoolLabel: TextView = row!!.findViewById<TextView>(R.id.channel_school) as TextView
 
     }
-}
+
+
+
+
+
+
+
+    }

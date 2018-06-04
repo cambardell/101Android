@@ -22,7 +22,6 @@ class AccountActivity : AppCompatActivity() {
 
         }
         startActivity(intent)
-
     }
 
     // Send a password reset email to the currently signed in user.
