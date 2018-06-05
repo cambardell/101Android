@@ -70,9 +70,9 @@ class MainActivity : AppCompatActivity() {
         // When a row is clicked, move to the chat view
         listViewItems?.setOnItemClickListener { _, _, position, _ ->
             val selectedChannel = channelList!![position]
-            val detailIntent = ChatActivity.newIntent(context, selectedChannel)
-
-            startActivity(detailIntent)
+            var i = Intent(this, ChatActivity::class.java)
+            i.putExtra("channel", selectedChannel.channelId as String)
+            startActivity(i)
         }
 
 
@@ -142,6 +142,7 @@ class MainActivity : AppCompatActivity() {
                 channelItem.channelMembers = map.get("members") as HashMap<Any, Any>?
                 channelItem.channelName = map.get("name") as String?
                 channelItem.channelSchool = map.get("school") as String?
+                channelItem.channelId = currentItem.key
                 val userId = FirebaseAuth.getInstance().currentUser!!.uid.toString()
                 val members = channelItem.channelMembers as HashMap<Any, Any>?
                 if (members != null) {

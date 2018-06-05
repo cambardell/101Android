@@ -20,7 +20,6 @@
         <activity android:name=".ChatActivity" />
         <activity android:name=".AddChannelActivity" />
         <activity android:name=".AccountActivity" />
-
     </application>
 
 </manifest>
