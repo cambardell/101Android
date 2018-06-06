@@ -146,7 +146,7 @@ class MainActivity : AppCompatActivity() {
                 val userId = FirebaseAuth.getInstance().currentUser!!.uid.toString()
                 val members = channelItem.channelMembers as HashMap<Any, Any>?
                 if (members != null) {
-                    Log.d("members", members.toString())
+
                     when {
                         userId in members.values -> channelList!!.add(channelItem);
 
