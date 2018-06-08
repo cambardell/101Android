@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         // When a row is clicked, move to the chat view
         listViewItems?.setOnItemClickListener { _, _, position, _ ->
             val selectedChannel = channelList!![position]
-            var i = Intent(this, ChatActivity::class.java)
+            var i = Intent(this, ChatActivity2::class.java)
             i.putExtra("channel", selectedChannel.channelId as String)
             startActivity(i)
         }

@@ -8,4 +8,5 @@ class Message {
     var messageText: String? = null
     var senderId: String? = null
     var senderName: String? = null
+    var photoUrl: String? = null
 }

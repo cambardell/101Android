@@ -17,9 +17,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ChatActivity" />
         <activity android:name=".AddChannelActivity" />
         <activity android:name=".AccountActivity" />
+        <activity android:name=".ChatActivity2"/>
     </application>
 
 </manifest>

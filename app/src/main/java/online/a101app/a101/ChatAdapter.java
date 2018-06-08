@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,6 +19,8 @@ public class ChatAdapter extends RecyclerView.Adapter{
 
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
+    private static final int VIEW_TYPE_PHOTOMESSAGE_SENT = 3;
+    private static final int VIEW_TYPE_PHOTOMESSAGE_RECEIVED = 4;
 
     public ChatAdapter(Context context, List<Message> messageList) {
         mContext = context;
@@ -38,12 +41,20 @@ public class ChatAdapter extends RecyclerView.Adapter{
 
         if (message.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
             // If the current user is the sender of the message
+            if (message.getPhotoUrl() == null) {
+                return VIEW_TYPE_MESSAGE_SENT;
+            }
+            else {
+                return VIEW_TYPE_PHOTOMESSAGE_SENT;
+            }
 
-            return VIEW_TYPE_MESSAGE_SENT;
         } else {
             // If some other user sent the message
-
-            return VIEW_TYPE_MESSAGE_RECEIVED;
+            if (message.getPhotoUrl() == null) {
+                return VIEW_TYPE_MESSAGE_RECEIVED;
+            } else {
+                return VIEW_TYPE_PHOTOMESSAGE_RECEIVED;
+            }
         }
     }
 
@@ -60,6 +71,15 @@ public class ChatAdapter extends RecyclerView.Adapter{
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.message_received, parent, false);
             return new ReceivedMessageHolder(view);
+        } else if (viewType == VIEW_TYPE_PHOTOMESSAGE_RECEIVED) {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.photo_received, parent, false);
+            return new ReceivedMessageHolder(view);
+
+        } else if (viewType == VIEW_TYPE_PHOTOMESSAGE_SENT) {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.photo_sent, parent, false);
+            return new SentMessageHolder(view);
         }
 
         return null;
@@ -68,7 +88,7 @@ public class ChatAdapter extends RecyclerView.Adapter{
     // Passes the message object to a ViewHolder so that the contents can be bound to UI.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Message message = (Message) mMessageList.get(position);
+        Message message = mMessageList.get(position);
 
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_MESSAGE_SENT:
@@ -76,6 +96,10 @@ public class ChatAdapter extends RecyclerView.Adapter{
                 break;
             case VIEW_TYPE_MESSAGE_RECEIVED:
                 ((ReceivedMessageHolder) holder).bind(message);
+            //case VIEW_TYPE_PHOTOMESSAGE_RECEIVED:
+            //    ((ReceivedMessageHolder) holder).bind(message);
+            //case VIEW_TYPE_PHOTOMESSAGE_SENT:
+            //    ((SentMessageHolder) holder).bind(message);
         }
     }
 
@@ -85,7 +109,7 @@ public class ChatAdapter extends RecyclerView.Adapter{
         SentMessageHolder(View itemView) {
             super(itemView);
 
-            messageText = (TextView) itemView.findViewById(R.id.text_message_body);
+            messageText = itemView.findViewById(R.id.text_message_body);
 
         }
 
@@ -99,18 +123,16 @@ public class ChatAdapter extends RecyclerView.Adapter{
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
-            messageText = (TextView) itemView.findViewById(R.id.text_message_body);
-            nameText = (TextView) itemView.findViewById(R.id.text_message_name);
+            messageText = itemView.findViewById(R.id.text_message_body);
+            nameText = itemView.findViewById(R.id.text_message_name);
 
         }
 
         void bind(Message message) {
             messageText.setText(message.getMessageText());
-
             nameText.setText(message.getSenderName());
-
-
         }
     }
+
 
 }
