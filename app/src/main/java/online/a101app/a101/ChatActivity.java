@@ -13,6 +13,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
     private RecyclerView mMessageRecycler;
-    static ChatAdapter mMessageAdapter;
+    ChatAdapter mMessageAdapter;
     static DatabaseReference databaseReference;
     static List<Message> messageList;
     String channelId;
@@ -40,22 +41,16 @@ public class ChatActivity extends AppCompatActivity {
         channelId = intent.getStringExtra("channel");
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        messageList = getMessages(channelId);
 
-        mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
-        mMessageAdapter = new ChatAdapter(this, messageList);
-        mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
-        mMessageRecycler.setAdapter(mMessageAdapter);
-    }
 
-    private static List<Message> getMessages(final String channelId) {
-        // Last 100 messages
         final List<Message> messagesList = new ArrayList<Message>();
 
-        databaseReference.child("channels").child(channelId).addValueEventListener(new ValueEventListener() {
+        Query query = databaseReference.child("channels").child(channelId).limitToLast(25);
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Iterator items = dataSnapshot.child("messages").getChildren().iterator();
+                messagesList.clear();
                 while (items.hasNext()) {
                     DataSnapshot item = ((DataSnapshot) items.next());
                     Message message = Message.Factory.create();
@@ -65,6 +60,8 @@ public class ChatActivity extends AppCompatActivity {
                     Log.d("message", message.getSenderName());
                     messagesList.add(message);
                 }
+                mMessageAdapter.notifyDataSetChanged();
+                mMessageRecycler.scrollToPosition(mMessageAdapter.getItemCount()-1);
             }
 
             @Override
@@ -72,8 +69,15 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
-        return messagesList;
+
+
+        mMessageRecycler = (RecyclerView) findViewById(R.id.reyclerview_message_list);
+        mMessageAdapter = new ChatAdapter(this, messagesList);
+        mMessageRecycler.setLayoutManager(new LinearLayoutManager(this));
+        mMessageRecycler.setAdapter(mMessageAdapter);
     }
+
+
 
 
 

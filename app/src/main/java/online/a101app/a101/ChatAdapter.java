@@ -26,7 +26,7 @@ public class ChatAdapter extends RecyclerView.Adapter{
 
     @Override
     public int getItemCount() {
-        Log.d("item count", String.valueOf(mMessageList.size()));
+
         return mMessageList.size();
     }
 
@@ -34,15 +34,15 @@ public class ChatAdapter extends RecyclerView.Adapter{
     @Override
     public int getItemViewType(int position) {
         Message message = (Message) mMessageList.get(position);
-        Log.d("senderId", message.getSenderId());
+
 
         if (message.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
             // If the current user is the sender of the message
-            Log.d("getItemViewType", String.valueOf(VIEW_TYPE_MESSAGE_SENT));
+
             return VIEW_TYPE_MESSAGE_SENT;
         } else {
             // If some other user sent the message
-            Log.d("getItemViewType", String.valueOf(VIEW_TYPE_MESSAGE_RECEIVED));
+
             return VIEW_TYPE_MESSAGE_RECEIVED;
         }
     }
@@ -51,7 +51,7 @@ public class ChatAdapter extends RecyclerView.Adapter{
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        Log.d("onCreateViewHolder", String.valueOf(viewType));
+
         if (viewType == VIEW_TYPE_MESSAGE_SENT) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.message_sent, parent, false);
