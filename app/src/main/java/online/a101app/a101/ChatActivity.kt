@@ -1,10 +1,13 @@
 package online.a101app.a101
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import com.google.firebase.database.*
 import java.util.ArrayList
 
@@ -39,7 +42,7 @@ class ChatActivity2 : AppCompatActivity() {
                     message.senderId = item.child("senderId").value!!.toString()
                     message.messageText = item.child("text").value?.toString()
                     message.photoUrl = item.child("photoURL").value?.toString()
-
+                    Log.d("message", message.senderName)
                     messagesList.add(message)
                 }
                 mMessageAdapter.notifyDataSetChanged()
@@ -52,10 +55,32 @@ class ChatActivity2 : AppCompatActivity() {
             }
         })
 
-
         mMessageRecycler = findViewById<RecyclerView>(R.id.reyclerview_message_list)
-        mMessageAdapter = ChatAdapter(this, messagesList)
+        mMessageAdapter = ChatAdapter(messagesList)
         mMessageRecycler!!.layoutManager = LinearLayoutManager(this)
         mMessageRecycler!!.adapter = mMessageAdapter
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.chat_menu_bar, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.channelInfo -> {
+            val intent = Intent(this, ChannelInfoActivity::class.java).apply {
+
+            }
+            intent.putExtra("channel", channelId)
+            startActivity(intent)
+            true
+        }
+
+        else -> {
+            // If we got here, the user's action was not recognized.
+            // Invoke the superclass to handle it.
+            super.onOptionsItemSelected(item)
+        }
     }
 }

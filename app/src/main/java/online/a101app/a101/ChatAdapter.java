@@ -2,11 +2,9 @@ package online.a101app.a101;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -14,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter{
-    private Context mContext;
+
     private List<Message> mMessageList;
 
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
@@ -22,8 +20,8 @@ public class ChatAdapter extends RecyclerView.Adapter{
     private static final int VIEW_TYPE_PHOTOMESSAGE_SENT = 3;
     private static final int VIEW_TYPE_PHOTOMESSAGE_RECEIVED = 4;
 
-    public ChatAdapter(Context context, List<Message> messageList) {
-        mContext = context;
+    public ChatAdapter(List<Message> messageList) {
+
         mMessageList = messageList;
     }
 
@@ -36,7 +34,7 @@ public class ChatAdapter extends RecyclerView.Adapter{
     // Determines the appropriate ViewType according to the sender of the message.
     @Override
     public int getItemViewType(int position) {
-        Message message = (Message) mMessageList.get(position);
+        Message message = mMessageList.get(position);
 
 
         if (message.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
