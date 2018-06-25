@@ -62,11 +62,10 @@ class MainActivity : AppCompatActivity() {
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
                             .setAvailableProviders(providers)
-                            .build(),
-                    RC_SIGN_IN);
+                            .build(), RC_SIGN_IN)
         }
 
-        val context = this
+
         // When a row is clicked, move to the chat view
         listViewItems?.setOnItemClickListener { _, _, position, _ ->
             val selectedChannel = channelList!![position]
@@ -125,6 +124,19 @@ class MainActivity : AppCompatActivity() {
     private fun addDataToList(dataSnapshot: DataSnapshot) {
         val items = dataSnapshot.children.iterator()
 
+        val users = dataSnapshot.child("users").children.iterator()
+
+        var userSchool = ""
+
+        while (users.hasNext()) {
+            val currentUser = users.next()
+            if (currentUser.key == FirebaseAuth.getInstance().currentUser!!.uid) {
+                val userSchoolMap = currentUser.getValue() as HashMap<String, String>
+                userSchool = userSchoolMap.get("school")!!
+            }
+        }
+
+
         //Check if current database contains any collection
         if (items.hasNext()) {
             val channelListIndex = items.next()
@@ -143,7 +155,7 @@ class MainActivity : AppCompatActivity() {
                 channelItem.channelName = map.get("name") as String?
                 channelItem.channelSchool = map.get("school") as String?
                 channelItem.channelId = currentItem.key
-                val userId = FirebaseAuth.getInstance().currentUser!!.uid.toString()
+                val userId = FirebaseAuth.getInstance().currentUser!!.uid
                 val members = channelItem.channelMembers as HashMap<Any, Any>?
                 if (members != null) {
 
@@ -164,10 +176,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode === RC_SIGN_IN) {
+        if (requestCode == RC_SIGN_IN) {
             val response = IdpResponse.fromResultIntent(data)
 
-            if (resultCode === Activity.RESULT_OK) {
+            if (resultCode == Activity.RESULT_OK) {
                 // Successfully signed in
                 Log.d("Login", "Success")
                 listViewItems = findViewById<View>(R.id.items_list) as ListView
