@@ -136,39 +136,50 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
-        //Check if current database contains any collection
-        if (items.hasNext()) {
-            val channelListIndex = items.next()
-            val itemsIterator = channelListIndex.children.iterator()
-
-            //check if the collection has any to do items or not
-            while (itemsIterator.hasNext()) {
-                //get current item
-                val currentItem = itemsIterator.next()
-
-                val channelItem = Channel.create()
-                //get current data in a map
-                val map = currentItem.getValue() as HashMap<String, Any>
-                //key will return Firebase ID
-                channelItem.channelMembers = map.get("members") as HashMap<Any, Any>?
-                channelItem.channelName = map.get("name") as String?
-                channelItem.channelSchool = map.get("school") as String?
-                channelItem.channelId = currentItem.key
-                val userId = FirebaseAuth.getInstance().currentUser!!.uid
-                val members = channelItem.channelMembers as HashMap<Any, Any>?
-                if (members != null) {
-
-                    when {
-                        userId in members.values -> channelList!!.add(channelItem);
-
-                    }
-                }
-
-
+        if (userSchool == "") {
+            // Move to the choose school activity
+            Log.d("user", "move to choose school activity")
+            val intent = Intent(this, ChooseSchoolActivity::class.java).apply {
 
             }
+            startActivity(intent)
+        } else {
+            //Check if current database contains any collection
+            if (items.hasNext()) {
+                val channelListIndex = items.next()
+                val itemsIterator = channelListIndex.child(userSchool).children.iterator()
+
+                //check if the collection has any to do items or not
+                while (itemsIterator.hasNext()) {
+                    //get current item
+                    val currentItem = itemsIterator.next()
+
+                    val channelItem = Channel.create()
+                    //get current data in a map
+                    val map = currentItem.getValue() as HashMap<String, Any>
+                    //key will return Firebase ID
+                    channelItem.channelMembers = map.get("members") as HashMap<Any, Any>?
+                    channelItem.channelName = map.get("name") as String?
+                    channelItem.channelSchool = map.get("school") as String?
+                    channelItem.channelId = currentItem.key
+                    val userId = FirebaseAuth.getInstance().currentUser!!.uid
+                    val members = channelItem.channelMembers as HashMap<Any, Any>?
+                    if (members != null) {
+
+                        when {
+                            userId in members.values -> channelList!!.add(channelItem);
+
+                        }
+                    }
+
+
+
+                }
+            }
         }
+
+
+
 
         //alert adapter that has changed
         adapter.notifyDataSetChanged()
