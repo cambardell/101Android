@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var adapter: ChannelAdapter
     private var listViewItems: ListView? = null
 
-
+    var userSchool = ""
 
     private var providers: List<AuthUI.IdpConfig> = Arrays.asList(
             AuthUI.IdpConfig.EmailBuilder().build()
@@ -71,6 +71,7 @@ class MainActivity : AppCompatActivity() {
             val selectedChannel = channelList!![position]
             var i = Intent(this, ChatActivity2::class.java)
             i.putExtra("channel", selectedChannel.channelId as String)
+            i.putExtra("school", userSchool)
             startActivity(i)
         }
 
@@ -86,7 +87,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.add_channel -> {
             val intent = Intent(this, AddChannelActivity::class.java).apply {
-
+                intent.putExtra("school", userSchool)
             }
             startActivity(intent)
             true
@@ -126,7 +127,7 @@ class MainActivity : AppCompatActivity() {
 
         val users = dataSnapshot.child("users").children.iterator()
 
-        var userSchool = ""
+
 
         while (users.hasNext()) {
             val currentUser = users.next()

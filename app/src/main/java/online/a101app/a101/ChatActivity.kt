@@ -16,6 +16,8 @@ class ChatActivity2 : AppCompatActivity() {
     lateinit var mMessageAdapter: ChatAdapter
     lateinit var databaseReference: DatabaseReference
     lateinit var channelId: String
+    lateinit var channelSchool: String
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,11 +28,12 @@ class ChatActivity2 : AppCompatActivity() {
         val intent = intent
         channelId = intent.getStringExtra("channel")
         databaseReference = FirebaseDatabase.getInstance().reference
+        channelSchool = intent.getStringExtra("school")
 
 
         val messagesList = ArrayList<Message>()
 
-        val query = databaseReference.child("channels").child(channelId).limitToLast(25)
+        val query = databaseReference.child("channels").child(channelSchool).child(channelId).limitToLast(25)
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val items = dataSnapshot.child("messages").children.iterator()

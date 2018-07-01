@@ -17,6 +17,7 @@ class AddChannelActivity : AppCompatActivity() {
     lateinit var database: DatabaseReference
 
     var channelList: MutableList<Channel>? = null
+    lateinit var userSchool: String
     lateinit var adapter: ChannelAdapter
     lateinit var filterAdapter: ChannelAdapter
 
@@ -32,7 +33,8 @@ class AddChannelActivity : AppCompatActivity() {
         setContentView(R.layout.add_channel)
 
         filterText = findViewById(R.id.searchChannel)
-
+        val intent = intent
+        userSchool = intent.getStringExtra("school")
 
         listViewItems = findViewById<View>(R.id.items_list) as ListView
         channelList = mutableListOf<Channel>()
@@ -99,7 +101,7 @@ class AddChannelActivity : AppCompatActivity() {
         //Check if current database contains any collection
         if (items.hasNext()) {
             val channelListIndex = items.next()
-            val itemsIterator = channelListIndex.children.iterator()
+            val itemsIterator = channelListIndex.child(userSchool).children.iterator()
 
             //check if the collection has any to do items or not
             while (itemsIterator.hasNext()) {
@@ -133,7 +135,7 @@ class AddChannelActivity : AppCompatActivity() {
     fun addToMembers(channel: Channel) {
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
         val userDisplayName = FirebaseAuth.getInstance().currentUser!!.displayName as String
-        val database = FirebaseDatabase.getInstance().getReference("channels")
+        val database = FirebaseDatabase.getInstance().getReference("channels").child(userSchool)
 
         var members = database.child(channel.channelId.toString()).child("members")
         members.push().setValue(userId)
