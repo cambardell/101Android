@@ -86,9 +86,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.add_channel -> {
-            val intent = Intent(this, AddChannelActivity::class.java).apply {
-                intent.putExtra("school", userSchool)
-            }
+            val intent = Intent(this, AddChannelActivity::class.java)
+            intent.putExtra("school", userSchool)
+            Log.d("school", userSchool)
+
             startActivity(intent)
             true
         }
@@ -127,13 +128,13 @@ class MainActivity : AppCompatActivity() {
 
         val users = dataSnapshot.child("users").children.iterator()
 
-
-
         while (users.hasNext()) {
             val currentUser = users.next()
             if (currentUser.key == FirebaseAuth.getInstance().currentUser!!.uid) {
+
                 val userSchoolMap = currentUser.getValue() as HashMap<String, String>
                 userSchool = userSchoolMap.get("school")!!
+                Log.d("school", userSchool)
             }
         }
 
@@ -172,15 +173,9 @@ class MainActivity : AppCompatActivity() {
 
                         }
                     }
-
-
-
                 }
             }
         }
-
-
-
 
         //alert adapter that has changed
         adapter.notifyDataSetChanged()

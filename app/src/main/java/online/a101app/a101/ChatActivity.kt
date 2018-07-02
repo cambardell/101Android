@@ -8,6 +8,9 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.EditText
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.util.ArrayList
 
@@ -17,7 +20,8 @@ class ChatActivity2 : AppCompatActivity() {
     lateinit var databaseReference: DatabaseReference
     lateinit var channelId: String
     lateinit var channelSchool: String
-
+    lateinit var sendButton: Button
+    lateinit var textBox: EditText
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +34,12 @@ class ChatActivity2 : AppCompatActivity() {
         databaseReference = FirebaseDatabase.getInstance().reference
         channelSchool = intent.getStringExtra("school")
 
+        sendButton = findViewById(R.id.button_chatbox_send)
+        textBox = findViewById(R.id.edittext_chatbox)
+
+        sendButton.setOnClickListener {
+            sendMessage()
+        }
 
         val messagesList = ArrayList<Message>()
 
@@ -85,5 +95,18 @@ class ChatActivity2 : AppCompatActivity() {
             // Invoke the superclass to handle it.
             super.onOptionsItemSelected(item)
         }
+    }
+
+    fun sendMessage() {
+        val messageText = textBox.text.toString()
+        val message = Message.create()
+        message.senderName = FirebaseAuth.getInstance().currentUser!!.displayName
+        message.senderId = FirebaseAuth.getInstance().currentUser!!.uid
+        message.messageText = messageText
+
+        val messageItem = hashMapOf("senderId" to message.senderId, "senderName" to message.senderName, "text" to messageText)
+
+        val messageRef = FirebaseDatabase.getInstance().reference.child("channels").child(channelSchool).child(channelId).child("messages")
+        messageRef.push().setValue(messageItem)
     }
 }

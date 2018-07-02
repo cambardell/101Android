@@ -69,13 +69,13 @@ class AddChannelActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 // TODO: Fix backspace
+                channelList = permanentList
                 var tempList = channelList!!.filter { it.channelName!!.contains(s!!, ignoreCase = true) } as MutableList<Channel>
                 channelList!!.clear()
                 for (i in tempList) {
                     channelList!!.add(i)
                 }
                 adapter.notifyDataSetChanged()
-
             }
         })
     }
@@ -109,13 +109,16 @@ class AddChannelActivity : AppCompatActivity() {
                 val currentItem = itemsIterator.next()
 
                 val channelItem = Channel.create()
+
                 //get current data in a map
                 val map = currentItem.getValue() as HashMap<String, Any>
+
                 //key will return Firebase ID
                 channelItem.channelMembers = map.get("members") as HashMap<Any, Any>
                 channelItem.channelName = map.get("name") as String?
                 channelItem.channelSchool = map.get("school") as String?
                 channelItem.channelId = currentItem.key
+
                 val userId = FirebaseAuth.getInstance().currentUser!!.uid.toString()
                 val members = channelItem.channelMembers as HashMap<Any, Any>
                 if (members != null) {
@@ -127,6 +130,7 @@ class AddChannelActivity : AppCompatActivity() {
             }
         }
 
+        permanentList = channelList
         Log.d("permanent", permanentList.toString())
         //alert adapter that has changed
         adapter.notifyDataSetChanged()
@@ -141,11 +145,8 @@ class AddChannelActivity : AppCompatActivity() {
         members.push().setValue(userId)
         permanentList!!.remove(channel)
 
-
         var names = database.child(channel.channelId.toString()).child("names")
         names.push().setValue(userDisplayName)
-
-
 
     }
 
