@@ -43,7 +43,7 @@ class ChatActivity2 : AppCompatActivity() {
 
         val messagesList = ArrayList<Message>()
 
-        val query = databaseReference.child("channels").child(channelSchool).child(channelId).limitToLast(25)
+        val query = databaseReference.child("channels").child(channelSchool).child(channelId).limitToLast(50)
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val items = dataSnapshot.child("messages").children.iterator()
@@ -86,6 +86,7 @@ class ChatActivity2 : AppCompatActivity() {
 
             }
             intent.putExtra("channel", channelId)
+            intent.putExtra("school", channelSchool)
             startActivity(intent)
             true
         }
@@ -97,7 +98,7 @@ class ChatActivity2 : AppCompatActivity() {
         }
     }
 
-    fun sendMessage() {
+    private fun sendMessage() {
         val messageText = textBox.text.toString()
         val message = Message.create()
         message.senderName = FirebaseAuth.getInstance().currentUser!!.displayName
