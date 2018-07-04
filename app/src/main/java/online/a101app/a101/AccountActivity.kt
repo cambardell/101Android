@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 
 class AccountActivity : AppCompatActivity() {
 
@@ -29,4 +30,6 @@ class AccountActivity : AppCompatActivity() {
         FirebaseAuth.getInstance().sendPasswordResetEmail(FirebaseAuth.getInstance().currentUser!!.email!!)
         Toast.makeText(this, "Password email reset sent.", Toast.LENGTH_SHORT).show()
     }
+
+
 }

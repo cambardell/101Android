@@ -20,8 +20,22 @@
         android:id="@+id/leave_class"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="leaveChannel"
         android:text="Leave Class"
+        app:layout_constraintBottom_toTopOf="@+id/channelInfo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/report_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="reportUser"
+        android:text="Report a User"
+        app:layout_constraintBottom_toTopOf="@+id/leave_class"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="196dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 </android.support.constraint.ConstraintLayout>
