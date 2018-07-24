@@ -3,6 +3,7 @@ package online.a101app.a101
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
@@ -17,6 +18,7 @@ class AddChannelActivity : AppCompatActivity() {
     lateinit var database: DatabaseReference
 
     var channelList: MutableList<Channel>? = null
+    var permanentList: MutableList<Channel>? = null
     lateinit var userSchool: String
     lateinit var adapter: ChannelAdapter
     lateinit var filterAdapter: ChannelAdapter
@@ -26,18 +28,20 @@ class AddChannelActivity : AppCompatActivity() {
     lateinit var filterText: EditText
     private var filteredChannelList: MutableList<Channel>? = null
     // Store a permanent copy of the original classes.
-    private var permanentList: MutableList<Channel>? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.add_channel)
 
         filterText = findViewById(R.id.searchChannel)
+        filterText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS)
         val intent = intent
         userSchool = intent.getStringExtra("school")
 
         listViewItems = findViewById<View>(R.id.items_list) as ListView
         channelList = mutableListOf<Channel>()
+        permanentList = mutableListOf<Channel>()
         adapter = ChannelAdapter(this, channelList!!)
         filteredChannelList = mutableListOf<Channel>()
         filterAdapter = ChannelAdapter(this, filteredChannelList!!)
@@ -64,13 +68,14 @@ class AddChannelActivity : AppCompatActivity() {
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // required
+
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // TODO: Fix backspace
-                channelList = permanentList
-                var tempList = channelList!!.filter { it.channelName!!.contains(s!!, ignoreCase = true) } as MutableList<Channel>
+              
+                Log.d("permanent", permanentList!!.size.toString())
+                Log.d("channels", channelList!!.size.toString())
+                var tempList = permanentList!!.filter { it.channelName!!.contains(s!!, ignoreCase = true) } as MutableList<Channel>
                 channelList!!.clear()
                 for (i in tempList) {
                     channelList!!.add(i)
@@ -121,17 +126,17 @@ class AddChannelActivity : AppCompatActivity() {
 
                 val userId = FirebaseAuth.getInstance().currentUser!!.uid.toString()
                 val members = channelItem.channelMembers as HashMap<Any, Any>
-                if (members != null) {
 
-                    when {
-                        userId !in members.values -> channelList!!.add(channelItem)
-                    }
+                when {
+                    userId !in members.values -> channelList!!.add(channelItem) and permanentList!!.add(channelItem)
                 }
+
+
+
             }
+
         }
 
-        permanentList = channelList
-        Log.d("permanent", permanentList.toString())
         //alert adapter that has changed
         adapter.notifyDataSetChanged()
     }

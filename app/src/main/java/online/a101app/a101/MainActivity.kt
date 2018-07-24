@@ -19,8 +19,13 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.Toast
 import android.widget.Toolbar
-import kotlin.collections.HashMap
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.AdRequest
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -39,10 +44,17 @@ class MainActivity : AppCompatActivity() {
             AuthUI.IdpConfig.EmailBuilder().build()
     )
 
+    lateinit var mAdView : AdView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        MobileAds.initialize(this, "ca-app-pub-4804366180565835~3263780833")
+        mAdView = findViewById(R.id.adView)
+        val adRequest = AdRequest.Builder().build()
+        mAdView.loadAd(adRequest)
 
         val auth = FirebaseAuth.getInstance()
 
@@ -68,6 +80,7 @@ class MainActivity : AppCompatActivity() {
 
         // When a row is clicked, move to the chat view
         listViewItems?.setOnItemClickListener { _, _, position, _ ->
+            Log.d("tapped", "tapped")
             val selectedChannel = channelList!![position]
             var i = Intent(this, ChatActivity2::class.java)
             i.putExtra("channel", selectedChannel.channelId as String)
@@ -179,6 +192,10 @@ class MainActivity : AppCompatActivity() {
 
         //alert adapter that has changed
         adapter.notifyDataSetChanged()
+
+        if (channelList!!.isEmpty()) {
+            Toast.makeText(this, "Tap the plus to add your classes.", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/channel_name"
         android:layout_below="@id/channel_name"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:text="TextView" />
 
     <ImageView
