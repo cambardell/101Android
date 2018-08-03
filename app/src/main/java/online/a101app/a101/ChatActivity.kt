@@ -51,11 +51,23 @@ class ChatActivity2 : AppCompatActivity() {
                 while (items.hasNext()) {
                     val item = items.next() as DataSnapshot
                     val message = Message.create()
+
+                    // If the message has text, it is a text message. Otherwise it is a photo
+                    val possibleMessageText  = item.child("text").value?.toString()?.let {
+                        message.senderName = item.child("senderName").value?.toString()
+                        message.senderId = item.child("senderId").value!!.toString()
+                        message.messageText = item.child("text").value?.toString()
+                    } ?: run {
+                        message.senderId = item.child("senderId").value!!.toString()
+                        message.photoUrl = item.child("photoURL").value?.toString()
+                    }
+
+
                     message.senderName = item.child("senderName").value?.toString()
                     message.senderId = item.child("senderId").value!!.toString()
                     message.messageText = item.child("text").value?.toString()
                     message.photoUrl = item.child("photoURL").value?.toString()
-                    Log.d("message", message.senderName)
+
                     messagesList.add(message)
                 }
                 mMessageAdapter.notifyDataSetChanged()

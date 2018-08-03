@@ -72,7 +72,7 @@ class AddChannelActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-              
+
                 Log.d("permanent", permanentList!!.size.toString())
                 Log.d("channels", channelList!!.size.toString())
                 var tempList = permanentList!!.filter { it.channelName!!.contains(s!!, ignoreCase = true) } as MutableList<Channel>
