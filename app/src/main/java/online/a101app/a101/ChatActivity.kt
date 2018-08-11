@@ -22,6 +22,15 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import android.R.attr.data
+import android.media.browse.MediaBrowser
+import android.renderscript.Sampler
+import android.widget.ImageButton
+import com.google.firebase.storage.StorageMetadata
+import java.io.File
+import java.time.LocalDateTime
+import kotlin.collections.HashMap
+
 
 class ChatActivity2 : AppCompatActivity() {
     private var mMessageRecycler: RecyclerView? = null
@@ -31,11 +40,14 @@ class ChatActivity2 : AppCompatActivity() {
     private lateinit var channelSchool: String
     private lateinit var sendButton: Button
     private lateinit var textBox: EditText
-    private lateinit var photoButton: Button
+    private lateinit var photoButton: ImageButton
 
     private val gallery = 1
     private val camera = 2
 
+    private val imageURLNotSetKey = "NOTSET"
+    var storage = FirebaseStorage.getInstance("gs://app-31003.appspot.com")
+    private var photoMessageMap = HashMap<String, Any>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,6 +111,8 @@ class ChatActivity2 : AppCompatActivity() {
 
             }
         })
+
+
 
         mMessageRecycler = findViewById<RecyclerView>(R.id.reyclerview_message_list)
         mMessageAdapter = ChatAdapter(messagesList)
@@ -183,16 +197,13 @@ class ChatActivity2 : AppCompatActivity() {
         {
             if (data != null)
             {
-
-                try
-                {
-
-
-                }
-                catch (e: IOException) {
-                    e.printStackTrace()
-                    Toast.makeText(this@ChatActivity2, "Failed!", Toast.LENGTH_SHORT).show()
-                }
+                val selectedImage = data.data
+                val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
+                val key = sendPhotoMessage()
+                val imagePath = FirebaseAuth.getInstance().currentUser!!.uid + LocalDateTime.now()
+                val metadata = StorageMetadata()
+                storage.reference.child(imagePath).putFile(selectedImage)
+                setImageURL(storage.getReference().child(metadata.path).toString(), key)
 
             }
 
@@ -202,6 +213,25 @@ class ChatActivity2 : AppCompatActivity() {
 
         }
     }
+
+    private fun sendPhotoMessage(): String {
+        val messageRef = FirebaseDatabase.getInstance().reference.child("channels").child(channelSchool).child(channelId).child("messages")
+        val messageItem = hashMapOf<String, Any>("photoURL" to imageURLNotSetKey, "senderId" to FirebaseAuth.getInstance().currentUser!!.uid)
+        val itemRef = messageRef.push()
+        itemRef.setValue(messageItem)
+        return itemRef.key!!
+
+    }
+
+    private fun setImageURL(url: String, key: String) {
+        val messageRef = FirebaseDatabase.getInstance().reference.child("channels").child(channelSchool).child(channelId).child("messages")
+        val itemRef = messageRef.child(key)
+        itemRef.updateChildren(mutableMapOf<String, Any>("photoURL" to (key as Any)))
+    }
+
+
+
+
 
 
 }

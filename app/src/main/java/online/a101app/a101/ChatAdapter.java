@@ -3,6 +3,7 @@ package online.a101app.a101;
 import android.content.Context;
 import android.media.Image;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,10 +130,16 @@ public class ChatAdapter extends RecyclerView.Adapter{
 
         void bind(Message message) {
             if (message.getMessageText() == null) {
-                // Load the image using Glide
-                Glide.with(imageView)
-                        .load(FirebaseStorage.getInstance().getReferenceFromUrl(message.getPhotoUrl()))
-                        .into(imageView);
+                if (message.getPhotoUrl().equals("NOTSET")) {
+                    return;
+                } else {
+                    // Load the image using Glide
+                    Log.d("message", message.getPhotoUrl().toString());
+                    Glide.with(imageView)
+                            .load(FirebaseStorage.getInstance().getReferenceFromUrl(message.getPhotoUrl()))
+                            .into(imageView);
+                }
+
             } else {
                 messageText.setText(message.getMessageText());
             }
