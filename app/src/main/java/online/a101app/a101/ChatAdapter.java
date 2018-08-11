@@ -1,6 +1,7 @@
 package online.a101app.a101;
 
 import android.content.Context;
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,23 +109,34 @@ public class ChatAdapter extends RecyclerView.Adapter{
             case VIEW_TYPE_PHOTOMESSAGE_RECEIVED:
                 ((ReceivedMessageHolder) holder).bind(message);
                 break;
-            //case VIEW_TYPE_PHOTOMESSAGE_SENT:
-            //    ((SentMessageHolder) holder).bind(message);
+            case VIEW_TYPE_PHOTOMESSAGE_SENT:
+                ((SentMessageHolder) holder).bind(message);
+                break;
         }
     }
 
     private class SentMessageHolder extends RecyclerView.ViewHolder {
         TextView messageText;
+        ImageView imageView;
 
         SentMessageHolder(View itemView) {
             super(itemView);
 
             messageText = itemView.findViewById(R.id.text_message_body);
+            imageView = itemView.findViewById(R.id.sentImageView);
 
         }
 
         void bind(Message message) {
-            messageText.setText(message.getMessageText());
+            if (message.getMessageText() == null) {
+                // Load the image using Glide
+                Glide.with(imageView)
+                        .load(FirebaseStorage.getInstance().getReferenceFromUrl(message.getPhotoUrl()))
+                        .into(imageView);
+            } else {
+                messageText.setText(message.getMessageText());
+            }
+
         }
     }
 
