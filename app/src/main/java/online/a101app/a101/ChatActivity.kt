@@ -200,10 +200,17 @@ class ChatActivity2 : AppCompatActivity() {
                 val selectedImage = data.data
                 val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
                 val key = sendPhotoMessage()
-                val imagePath = FirebaseAuth.getInstance().currentUser!!.uid + LocalDateTime.now()
+                fun ClosedRange<Int>.random() =
+                        Random().nextInt((endInclusive + 1) - start) +  start
+                val imagePath = FirebaseAuth.getInstance().currentUser!!.uid + (0..1000000).random()
                 val metadata = StorageMetadata()
-                storage.reference.child(imagePath).putFile(selectedImage)
-                setImageURL(storage.getReference().child(metadata.path).toString(), key)
+                val upload = storage.reference.child(imagePath).putFile(selectedImage)
+                Log.d("uploading", "photo")
+                upload.addOnCompleteListener {
+                    Log.d("photo", "uploaded")
+                    setImageURL(storage.getReference().child(imagePath).toString(), key)
+                }
+
 
             }
 
@@ -218,20 +225,17 @@ class ChatActivity2 : AppCompatActivity() {
         val messageRef = FirebaseDatabase.getInstance().reference.child("channels").child(channelSchool).child(channelId).child("messages")
         val messageItem = hashMapOf<String, Any>("photoURL" to imageURLNotSetKey, "senderId" to FirebaseAuth.getInstance().currentUser!!.uid)
         val itemRef = messageRef.push()
-        itemRef.setValue(messageItem)
+        // itemRef.setValue(messageItem)
         return itemRef.key!!
 
     }
 
     private fun setImageURL(url: String, key: String) {
+        Log.d("message", "Sending message")
         val messageRef = FirebaseDatabase.getInstance().reference.child("channels").child(channelSchool).child(channelId).child("messages")
+        val messageItem = hashMapOf<String, Any>("photoURL" to url, "senderId" to FirebaseAuth.getInstance().currentUser!!.uid)
         val itemRef = messageRef.child(key)
-        itemRef.updateChildren(mutableMapOf<String, Any>("photoURL" to (key as Any)))
+        itemRef.setValue(messageItem)
+
     }
-
-
-
-
-
-
 }
