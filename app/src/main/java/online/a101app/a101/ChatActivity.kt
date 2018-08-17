@@ -71,8 +71,6 @@ class ChatActivity2 : AppCompatActivity() {
             attachPhoto()
         }
 
-
-
         val messagesList = ArrayList<Message>()
 
         val query = databaseReference.child("channels").child(channelSchool).child(channelId).limitToLast(50)
@@ -111,8 +109,6 @@ class ChatActivity2 : AppCompatActivity() {
 
             }
         })
-
-
 
         mMessageRecycler = findViewById<RecyclerView>(R.id.reyclerview_message_list)
         mMessageAdapter = ChatAdapter(messagesList)
@@ -204,6 +200,7 @@ class ChatActivity2 : AppCompatActivity() {
                         Random().nextInt((endInclusive + 1) - start) +  start
                 val imagePath = FirebaseAuth.getInstance().currentUser!!.uid + (0..1000000).random()
                 val metadata = StorageMetadata()
+                Toast.makeText(this, "Uploading", Toast.LENGTH_LONG).show()
                 val upload = storage.reference.child(imagePath).putFile(selectedImage)
                 Log.d("uploading", "photo")
                 upload.addOnCompleteListener {

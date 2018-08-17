@@ -33,8 +33,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="foregroundImage" value="$PROJECT_DIR$/Icon/android/mipmap-xxxhdpi/ic_launcher.png" />
-                                      <entry key="previewDensity" value="XXHIGH" />
+                                      <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="d27220" />
+                                      <entry key="foregroundImage" value="$PROJECT_DIR$/IconOrange/android/mipmap-xxxhdpi/ic_launcher.png" />
+                                      <entry key="previewDensity" value="MEDIUM" />
                                     </map>
                                   </option>
                                 </PersistentState>

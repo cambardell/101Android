@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 class ChooseSchoolActivity: AppCompatActivity() {
-    var schoolList: Array<String> = arrayOf("University of Waterloo", "Queen's University", "Wilfrid Laurier University")
+    var schoolList: Array<String> = arrayOf("University of Waterloo", "Queens University", "Wilfrid Laurier University", "Trent University")
 
     private var listViewItems: ListView? = null
     lateinit var adapter: SchoolAdapter
